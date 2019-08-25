@@ -1,10 +1,14 @@
-from app.controllers.orders import OrdersController
-from flask import Blueprint, request, Response, current_app
+from flask import Blueprint, request, current_app
+from app.controllers.orders_controller import OrdersController
 
-bp = Blueprint('orders', __name__, url_prefix='/pedidos')
+bp = Blueprint('orders', __name__, url_prefix='/orders')
 
-orders = OrdersController(request, Response())
-
-@bp.route('/<id>/productos', methods=['GET'])
+@bp.route('/<id>', methods=['GET'])
 def orders_by_id(id):
-	return orders.products_by_order(id)
+	orders = OrdersController(request)
+	return orders.get_order(id)
+
+@bp.route('/<id>/stock', methods=['GET'])
+def order_stock(id):
+	orders = OrdersController(request)
+	return orders.order_products_stock(id)

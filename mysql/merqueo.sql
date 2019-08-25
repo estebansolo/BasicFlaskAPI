@@ -29,7 +29,7 @@ CREATE TABLE `orders` (
   `user` varchar(255) NOT NULL,
   `deliveryDate` date DEFAULT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=16 DEFAULT CHARSET=utf8;
+) ENGINE=MyISAM AUTO_INCREMENT=16 DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -53,8 +53,9 @@ CREATE TABLE `orders_products` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `product_id` int(11) NOT NULL,
   `order_id` int(11) NOT NULL,
+  `quantity` int(11) NOT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=56 DEFAULT CHARSET=utf8;
+) ENGINE=MyISAM AUTO_INCREMENT=56 DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -63,7 +64,7 @@ CREATE TABLE `orders_products` (
 
 LOCK TABLES `orders_products` WRITE;
 /*!40000 ALTER TABLE `orders_products` DISABLE KEYS */;
-INSERT INTO `orders_products` VALUES (1,1,1),(2,2,1),(3,3,1),(4,4,1),(5,37,1),(6,5,2),(7,6,2),(8,7,3),(9,8,3),(10,9,3),(11,10,3),(12,11,3),(13,12,4),(14,13,4),(15,14,4),(16,15,4),(17,4,4),(18,16,5),(19,17,6),(20,18,6),(21,19,6),(22,20,6),(23,15,6),(24,21,7),(25,22,7),(26,23,7),(27,24,7),(28,39,7),(29,25,8),(30,26,8),(31,27,8),(32,22,8),(33,5,8),(34,22,9),(35,28,10),(36,7,11),(37,41,12),(38,19,12),(39,29,12),(40,17,12),(41,30,12),(42,7,13),(43,25,13),(44,5,13),(45,31,13),(46,43,14),(47,30,14),(48,32,14),(49,33,14),(50,28,14),(51,16,15),(52,34,15),(53,35,15),(54,12,15),(55,36,15);
+INSERT INTO `orders_products` VALUES (1,1,1,1),(2,2,1,21),(3,3,1,10),(4,4,1,5),(5,37,1,7),(6,5,2,100),(7,6,2,60),(8,7,3,4),(9,8,3,3),(10,9,3,4),(11,10,3,8),(12,11,3,5),(13,12,4,3),(14,13,4,2),(15,14,4,4),(16,15,4,3),(17,4,4,2),(18,16,5,1500),(19,17,6,2),(20,18,6,3),(21,19,6,2),(22,20,6,3),(23,15,6,2),(24,21,7,3),(25,22,7,2),(26,23,7,2),(27,24,7,15),(28,39,7,4),(29,25,8,3),(30,26,8,2),(31,27,8,1),(32,22,8,4),(33,5,8,1),(34,22,9,1),(35,28,10,1),(36,7,11,1),(37,41,12,1),(38,19,12,6),(39,29,12,1),(40,17,12,1),(41,30,12,1),(42,7,13,1),(43,25,13,2),(44,5,13,1),(45,31,13,25),(46,43,14,1),(47,30,14,1),(48,32,14,1),(49,33,14,1),(50,28,14,2),(51,16,15,3),(52,34,15,3),(53,35,15,3),(54,12,15,1),(55,36,15,1);
 /*!40000 ALTER TABLE `orders_products` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -81,7 +82,7 @@ CREATE TABLE `products` (
   `date` date NOT NULL,
   `provider_id` int(11) DEFAULT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=42 DEFAULT CHARSET=utf8;
+) ENGINE=MyISAM AUTO_INCREMENT=42 DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -105,7 +106,7 @@ CREATE TABLE `providers` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `name` varchar(255) NOT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=utf8;
+) ENGINE=MyISAM AUTO_INCREMENT=4 DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --

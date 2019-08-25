@@ -1,0 +1,23 @@
+[
+    {
+        "id": 10,
+        "product_id": 1,
+        "name": "Huevos",
+        "quantity": 30,
+        "inventory": 50
+    },
+    {
+        "id": 10,
+        "product_id": 5,
+        "name": "Galletas",
+        "quantity": 3,
+        "inventory": 0
+    },
+    {
+        "id": 10,
+        "product_id": 2,
+        "name": "Harina",
+        "quantity": 3,
+        "inventory": 1
+    }
+]
