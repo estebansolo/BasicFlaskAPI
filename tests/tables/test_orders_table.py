@@ -1,6 +1,6 @@
 import json
 from mock import patch
-from app.models import Orders
+from app.models import OrdersModel
 
 def get_orders():
     with open('tests/fixtures/orders.json', 'r') as json_file:
@@ -9,8 +9,8 @@ def get_orders():
 ORDERS = get_orders()
 
 @patch("app.models.connection.Manager.execute")
-def test_get_order(mock_execute_query):
-    instance = Orders()
+def test_get_order_with_no_id(mock_execute_query):
+    instance = OrdersModel()
     response = instance.get_order()
 
     assert response == {}
@@ -18,7 +18,7 @@ def test_get_order(mock_execute_query):
 
 @patch("app.models.connection.Manager.execute", return_value=[ORDERS[1]])
 def test_get_order(mock_execute_query):
-    instance = Orders()
+    instance = OrdersModel()
 
     order_id = 1
     response = instance.get_order(order_id)

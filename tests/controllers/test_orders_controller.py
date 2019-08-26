@@ -3,12 +3,8 @@ from mock import patch
 from flask import request
 from app.controllers.orders_controller import OrdersController
 
-def get_order_products():
-    with open('tests/fixtures/order_products.json', 'r') as json_file:
-        return json.loads(json_file.read())
-
-def get_orders():
-    with open('tests/fixtures/orders.json', 'r') as json_file:
+def get_json_content(json_path):
+    with open(json_path, 'r') as json_file:
         return json.loads(json_file.read())
 
 def filter_product(product):
@@ -18,10 +14,10 @@ def filter_product(product):
         'name': product['name']
     }
 
-ORDERS = get_orders()
-ORDER_PRODUCTS = get_order_products()
+ORDERS = get_json_content("tests/fixtures/orders.json")
+ORDER_PRODUCTS = get_json_content("tests/fixtures/order_products.json")
 
-@patch("app.models.OrdersProducts.products_by_order_id", return_value=ORDER_PRODUCTS)
+@patch("app.models.OrdersProductsModel.products_by_order_id", return_value=ORDER_PRODUCTS)
 def test_stock_products(mock_order_products_by_id):
     instance = OrdersController(request)
 
@@ -42,7 +38,7 @@ def test_stock_products(mock_order_products_by_id):
 
     mock_order_products_by_id.assert_called_once_with(order_id)
 
-@patch("app.models.Orders.get_order", return_value=ORDERS[2])
+@patch("app.models.OrdersModel.get_order", return_value=ORDERS[2])
 def test_get_order(mock_get_order):
     instance = OrdersController(request)
 

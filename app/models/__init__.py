@@ -1,10 +1,10 @@
 """
 Models
 """
-from app.models.tables.orders import Orders
-from app.models.tables.orders_products import OrdersProducts
+from app.models.tables.orders_model import OrdersModel
+from app.models.tables.orders_products_model import OrdersProductsModel
 
 __all__ = [
-    "Orders",
-    "OrdersProducts"
+    "OrdersModel",
+    "OrdersProductsModel"
 ]

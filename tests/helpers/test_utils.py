@@ -1,4 +1,5 @@
 import json
+from decimal import *
 from datetime import datetime
 from app.helpers import utils
 
@@ -19,4 +20,14 @@ def test_serialize_dict_and_list_string_list_convertion():
     response = utils.serialize_dict_and_list(value)
 
     value['date'] = str(value['date'])
+    assert response == json.dumps(value) and isinstance(response, str)
+
+
+def test_serialize_dict_and_list_string_decimal_convertion():
+    decimal_value = Decimal(23)
+    value = {"name": "tester", "quantity": decimal_value}
+
+    response = utils.serialize_dict_and_list(value)
+
+    value['quantity'] = int(value['quantity'])
     assert response == json.dumps(value) and isinstance(response, str)

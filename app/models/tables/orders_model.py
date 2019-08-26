@@ -1,12 +1,12 @@
 from app.models.connection import Manager
 
-class Orders(Manager):
+class OrdersModel(Manager):
     def __init__(self):
         self.table = "orders"
 
     def get_order(self, id=None):
         if not isinstance(id, int):
-            return []
+            return {}
 
         query = "SELECT * FROM {} WHERE `id` = '{}'".format(self.table, id)
         result = self.execute(query)
