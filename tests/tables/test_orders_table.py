@@ -8,6 +8,13 @@ def get_orders():
 
 ORDERS = get_orders()
 
+
+@patch("app.models.connection.Manager.execute")
+def test_get_all_orders(mock_execute_query):
+    OrdersModel().get_all_orders()
+    mock_execute_query.assert_called_with("SELECT * FROM orders")
+
+
 @patch("app.models.connection.Manager.execute")
 def test_get_order_with_no_id(mock_execute_query):
     instance = OrdersModel()

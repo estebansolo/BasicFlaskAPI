@@ -1,56 +1,67 @@
+from app.controllers.products_controller import ProductsController
 from app.models import OrdersModel, OrdersProductsModel
-from app.helpers.decorators import flask_request
 
 class OrdersController(object):
-    def __init__(self,request):
+    def __init__(self):
         self.orders_model = OrdersModel()
         self.orders_products_model = OrdersProductsModel()
 
 
-    @flask_request
-    def get_order(self, order_id):
-        return self.orders_model.get_order(int(order_id))
+    def get_order_by_id(self, id):
+        return self.orders_model.get_order(int(id))
 
 
-    @flask_request
-    def order_products_stock(self, order_id):
-        order_products = self.get_products(order_id)
-        in_stock, out_of_stock = OrdersController.get_stock_products(order_products)
-        return {"in_stock": in_stock, "out_of_stock": out_of_stock}
+    def get_complete_grouped_orders(self):
+        orders = self.get_orders_with_products()
+        return OrdersController.get_orders_same_user(orders)
 
 
-    def get_products(self, order_id):
-        return self.orders_products_model.products_by_order_id(int(order_id))
+    def get_orders_with_products(self):
+        orders = self.get_priorized_orders()
+        products = self.get_products_by_orders(orders)
+        return self.merge_products_with_orders(orders, products)
+
+
+    def get_priorized_orders(self):
+        orders = self.orders_model.get_all_orders()
+        if not orders:
+            return orders
+
+        return sorted(orders, key=lambda ord: ord['priority'])
+
+
+    def get_products_by_orders(self, orders):
+        order_ids = list(map(lambda order: order['id'], orders))
+        products = self.orders_products_model.products_by_order_id(order_ids)
+        return products
+
+
+    def merge_products_with_orders(self, orders, products):
+        for key, order in enumerate(orders):
+            filter_products = list(filter(
+                lambda product: product['order_id'] == order['id'], products
+            ))
+
+            order_products = list(map(ProductsController.clean_product_info, filter_products))
+            orders[key]['products'] = order_products
+
+        return orders
 
 
     @staticmethod
-    def get_stock_products(order_products):
-        in_stock, out_of_stock = [], []
+    def get_orders_same_user(orders, carried_orders=None):
+        if carried_orders is None:
+            carried_orders = []
 
-        for product in order_products:
-            quantity = product.get("quantity", 0)
-            inventory = product.get("inventory", 0)
-            out_item = quantity - inventory
+        if not orders:
+            return carried_orders
 
-            if out_item >= 0:
-                if inventory > 0:
-                    in_stock.append(OrdersController.get_stock_info(product, inventory))
+        order = orders.pop(0)
+        for key, carried in enumerate(carried_orders):
+            if carried['address'] == order['address']:
+                carried_orders[key]['products'] += order['products']
+                break
+        else:
+            carried_orders.append(order)
 
-                out_of_stock.append(OrdersController.get_stock_info(product, out_item))
-            else:
-                quantity = inventory if inventory < quantity else quantity
-                in_stock.append(OrdersController.get_stock_info(product, quantity))
-
-        return in_stock, out_of_stock
-
-
-    @staticmethod
-    def get_stock_info(product=None, quantity=0):
-        if product is None:
-            product = {}
-
-        return {
-            "product_id": product.get("product_id", 0),
-            "name": product.get("name", ""),
-            "quantity": quantity
-        }
+        return OrdersController.get_orders_same_user(orders, carried_orders)

@@ -17,51 +17,29 @@ def filter_product(product):
 ORDERS = get_json_content("tests/fixtures/orders.json")
 ORDER_PRODUCTS = get_json_content("tests/fixtures/order_products.json")
 
+@patch("app.models.OrdersModel.get_all_orders", return_value = ORDERS)
 @patch("app.models.OrdersProductsModel.products_by_order_id", return_value=ORDER_PRODUCTS)
-def test_stock_products(mock_order_products_by_id):
-    instance = OrdersController(request)
+def test_get_orders_with_products(mock_products_by_order_id, mock_get_all_orders):
+    response = OrdersController().get_orders_with_products()
+    mock_products_by_order_id.assert_called_with([1, 3, 2])
 
-    order_id = 10
-    products = list(map(filter_product, ORDER_PRODUCTS))
+@patch("app.models.OrdersModel.get_all_orders")
+def test_get_priorized_orders(mock_get_all_orders):
+    mock_get_all_orders.return_value = ORDERS
 
-    response = instance.order_products_stock(order_id)
-    result = json.loads(response.data.decode('utf8'))
+    response = OrdersController().get_priorized_orders()
+    assert response == [ORDERS[0], ORDERS[2], ORDERS[1]]
 
-    assert result == {
-        "out_of_stock": [
-            {**products[1]}, {**products[2], 'quantity': 2}
-        ],
-        "in_stock": [
-            {**products[0]}, {**products[2], 'quantity': 1}
-        ]
-    }
+@patch("app.models.OrdersModel.get_all_orders")
+def test_get_priorized_orders_empty(mock_get_all_orders):
+    mock_get_all_orders.return_value = []
 
-    mock_order_products_by_id.assert_called_once_with(order_id)
+    response = OrdersController().get_priorized_orders()
+    assert not response
 
-@patch("app.models.OrdersModel.get_order", return_value=ORDERS[2])
-def test_get_order(mock_get_order):
-    instance = OrdersController(request)
-
-    order_id = 10
-    response = instance.get_order(order_id)
-    result = json.loads(response.data.decode('utf8'))
-
-    mock_get_order.assert_called_once_with(order_id)
-    assert result == ORDERS[2]
-
-
-def test_get_stock_information_missing_data():
-    response = OrdersController.get_stock_info()
-    assert response == {"product_id": 0, "name": "", "quantity": 0}
-
-
-def test_get_stock_information():
-    quantity = 5
-    product_info = ORDER_PRODUCTS[1]
-
-    response = OrdersController.get_stock_info(product_info, quantity)
-    assert response == {
-        "product_id": product_info['product_id'],
-        "name": product_info['name'],
-        "quantity": quantity
-    }
+@patch('app.controllers.orders_controller.OrdersController.get_orders_with_products')
+def test_get_complete_grouped_orders(mock_get_orders_with_products):
+    mock_get_orders_with_products.return_value = ORDERS
+    response = OrdersController().get_complete_grouped_orders()
+    assert len(response) == 2
+    assert len(response[0]['products']) == 2

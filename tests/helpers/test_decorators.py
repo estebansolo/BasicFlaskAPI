@@ -14,10 +14,10 @@ def flask_request_decorated_function(raise_exception=False):
 
 def test_flask_request_exception():
     response = flask_request_decorated_function(True)
-
     result = json.loads(response.data.decode('utf8'))
     assert "error" in result and result['error'] == REQUEST_EXCEPTION_DECO
 
 def test_flask_request():
     response = flask_request_decorated_function()
-    assert response.data == REQUEST_RESPONSE_DECO.encode('utf8')
+    result = json.loads(response.data.decode('utf8'))
+    assert result['data'] == REQUEST_RESPONSE_DECO

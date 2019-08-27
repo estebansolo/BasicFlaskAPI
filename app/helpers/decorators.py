@@ -3,14 +3,20 @@ from app.helpers.utils import serialize_dict_and_list
 
 def flask_request(fun):
     def inner(*args, **kwargs):
+        result = []
+        status = "error"
+        error_message = ""
+        status_code = "500"
+
         try:
-            status = '200'
+            status = "success"
+            status_code = '200'
             result = fun(*args, **kwargs)
 
         except Exception as error:
-            status = '500'
-            result = {"error": str(error)}
+            error_message = str(error)
 
-        return Response(serialize_dict_and_list(result), status)
+        result = {"status": status, "data": result, "error": error_message}
+        return Response(serialize_dict_and_list(result), status_code)
 
     return inner

@@ -8,25 +8,34 @@ class OrdersProductsModel(Manager):
         self.products_table = "products"
 
     def products_by_order_id(self, order_id=None):
-        if not isinstance(order_id, int):
+        if isinstance(order_id, int) or isinstance(order_id, str):
+            where_ids = "order_id = '{}'".format(order_id)
+        elif isinstance(order_id, list):
+            number_to_string = list(map(lambda id: str(id), order_id))
+            where_ids = "order_id IN ({})".format(", ".join(number_to_string))
+        else:
             return []
 
-        projection = self.select(["op.*", "p.quantity AS inventory", "p.name AS name"])
+        projection = self.select([
+            "op.*",
+            "p.quantity AS inventory",
+            "p.name AS name",
+            "p.provider_id AS provider_id",
+        ])
 
-        select = "SELECT {} FROM {} as op".format(projection, self.table)
-        join = "INNER JOIN {} as p ON p.id = op.product_id".format(self.products_table)
-        where = "WHERE `order_id` = '{}'".format(order_id)
+        query = "SELECT {} FROM {} as op " \
+                "INNER JOIN {} as p ON p.id = op.product_id " \
+                "WHERE {}".format(
+                    projection,
+                    self.table,
+                    self.products_table,
+                    where_ids
+                )
 
-        return self.execute("{} {} {}".format(select, join, where))
+        return self.execute(query)
 
-    def sold_products_by_date(self, search_date="", order_by=None, limit=3):
-        ordering_by = ""
-        if isinstance(order_by, list) and len(order_by) == 2:
-            ordering_by = "ORDER BY {} {} ".format(order_by[0], order_by[1])
-
-
-        if search_date == "":
-            search_date = str(date.today())
+    def sold_products_by_date(self, search_date="2019-03-01", order_by='asc', limit=None):
+        order_by = order_by if order_by.lower() in ["asc", "desc"] else "asc"
 
         projection = self.select([
             "op.product_id AS product_id",
@@ -39,7 +48,8 @@ class OrdersProductsModel(Manager):
         inner_join = "INNER JOIN {} AS p ON p.id = op.product_id ".format(self.products_table)
         where = "WHERE deliveryDate = '{}' ".format(search_date)
         group_by = "GROUP BY product_id "
-        limit = "LIMIT {}".format(limit)
+        query_limit = "LIMIT {}".format(limit) if limit is not None else ""
+        ordering_by = "ORDER BY quantity {} ".format(order_by)
 
         return self.execute(
             "{}{}{}{}{}{}{}".format(
@@ -49,6 +59,6 @@ class OrdersProductsModel(Manager):
                 where,
                 group_by,
                 ordering_by,
-                limit
+                query_limit
             )
         )
