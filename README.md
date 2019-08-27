@@ -1,16 +1,31 @@
 # Prueba Merqueo
 
-## Docker Compose
+## Ejecutar entorno
 
-  `docker-compose up -d` Iniciar entorno de desarrollo
+  - Iniciar entorno de desarrollo: `docker-compose up -d`
+  - Importar base de datos: `docker exec -i $(docker-compose ps -q mysql-db) mysql -uroot -pm3rqu30! --database=merqueo < merqueo.sql`
 
 ## Adminer
 
-`http://192.168.55.3:8080`
+  Se tiene un contenedor con Adminer sobre el cual se puede acceder a la base de datos
 
-## DB
+  `http://192.168.55.3:8080`
+
+## MySQL
 
   - *Host:* 192.168.55.2
-  - *Port:* 5006
   - *User:* dbuser
-  - *Pass:* m3rqu30!
+  - *Password:* m3rqu30!
+
+## Ejecutar Pruebas
+
+### Requisitos
+
+  - pytest
+  - mock
+  - mysql-connector-python
+  - flask
+
+### Ejecucion
+  
+  - `python3 -m pytest tests/* -v`

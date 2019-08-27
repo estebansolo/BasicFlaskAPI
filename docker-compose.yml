@@ -1,7 +1,7 @@
 version: '3'
 services:
   web:
-    container_name: inventory-api
+    container_name: inventory-merqueo-api
     volumes:
       - "./app:/app"
     depends_on:
@@ -13,10 +13,10 @@ services:
       merqueo:
         ipv4_address: 192.168.55.199
   mysql-db:
-    container_name: mysql
+    container_name: mysql-merqueo-api
     image: mysql:5.7
     volumes:
-       - ./data/mysql:/var/lib/mysql
+       - sql-db:/var/lib/mysql
     environment:
       MYSQL_ROOT_PASSWORD: m3rqu30!
       MYSQL_DATABASE: merqueo
@@ -28,7 +28,7 @@ services:
       merqueo:
         ipv4_address: 192.168.55.2
   adminer:
-      container_name: adminer-inventory-api
+      container_name: adminer-merqueo-api
       image: adminer
       restart: always
       ports:
@@ -36,6 +36,9 @@ services:
       networks:
         merqueo:
           ipv4_address: 192.168.55.3
+volumes:
+  sql-db:
+
 networks:
   merqueo:
     driver: bridge

@@ -17,6 +17,6 @@ def flask_request(fun):
             error_message = str(error)
 
         result = {"status": status, "data": result, "error": error_message}
-        return Response(serialize_dict_and_list(result), status_code)
+        return Response(serialize_dict_and_list(result), status_code, mimetype='application/json')
 
     return inner
