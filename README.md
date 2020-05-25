@@ -1,4 +1,9 @@
-# Prueba Merqueo
+# Basic Flask API
+
+Prueba para Merqueo sobre la realizacion de un API REST.
+
+- [Prueba Backend](prueba/PruebaBackend.pdf)
+- [Metodos del API](prueba/RespuestaPruebaBackend.pdf)
 
 ## Ejecutar entorno
 
